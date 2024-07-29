@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">homework5</a> &gt; <a href="index.source.html" class="el_package">com.applaudo.homework5.services</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.applaudo.homework5.services;
+
+import static com.applaudo.homework5.utils.Validations.emailValidator;
+import static com.applaudo.homework5.utils.Validations.phoneNumberValidator;
+
+import com.applaudo.homework5.entities.User;
+import com.applaudo.homework5.repositories.UserRepository;
+import com.applaudo.homework5.services.exceptions.ServicesNotFoundException;
+import com.applaudo.homework5.utils.exceptions.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L17">public class UserService {</span>
+
+  @Autowired private UserRepository userRepository;
+
+  public void createUser(User user) throws ServicesNotFoundException, ValidationException {
+<span class="fc" id="L22">    List&lt;String&gt; missingFields = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L24" title="All 2 branches covered.">    if (user.getEmail() == null) {</span>
+<span class="fc" id="L25">      missingFields.add(&quot;Email&quot;);</span>
+    }
+<span class="fc bfc" id="L27" title="All 2 branches covered.">    if (user.getFirstName() == null) {</span>
+<span class="fc" id="L28">      missingFields.add(&quot;First Name&quot;);</span>
+    }
+<span class="fc bfc" id="L30" title="All 2 branches covered.">    if (user.getLastName() == null) {</span>
+<span class="fc" id="L31">      missingFields.add(&quot;Last Name&quot;);</span>
+    }
+
+<span class="fc bfc" id="L34" title="All 2 branches covered.">    if (!missingFields.isEmpty()) {</span>
+<span class="fc" id="L35">      String missingFieldsMsg = String.join(&quot;, &quot;, missingFields);</span>
+<span class="fc" id="L36">      throw new RuntimeException(&quot;The following fields are required: &quot; + missingFieldsMsg);</span>
+    }
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    if (!emailValidator(user.getEmail())) {</span>
+<span class="fc" id="L40">      throw new ValidationException(&quot;The email address is not in a valid format.&quot;);</span>
+    }
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">    if (!phoneNumberValidator(user.getPhone())) {</span>
+<span class="fc" id="L44">      throw new ValidationException(</span>
+          &quot;The phone number does not have the correct pattern (+503 #### ####).&quot;);
+    }
+
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">    if (user.getFirstName().isEmpty() || user.getLastName().isEmpty()) {</span>
+<span class="fc" id="L49">      throw new ValidationException(&quot;First or last name cannot be blank.&quot;);</span>
+    }
+
+<span class="fc" id="L52">    Optional&lt;User&gt; existingUser = userRepository.findByEmail(user.getEmail());</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">    if (existingUser.isPresent()) {</span>
+<span class="fc" id="L54">      throw new ServicesNotFoundException(&quot;The user already exists with the given email account.&quot;);</span>
+    }
+<span class="fc" id="L56">    userRepository.save(user);</span>
+<span class="fc" id="L57">  }</span>
+
+  public User updateUser(Long userId, User user) throws ServicesNotFoundException {
+<span class="fc" id="L60">    Optional&lt;User&gt; existingUser = userRepository.findById(userId);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">    if (existingUser.isEmpty()) {</span>
+<span class="fc" id="L62">      throw new ServicesNotFoundException(&quot;User not found&quot;);</span>
+    }
+
+<span class="fc" id="L65">    User updatedUser = existingUser.get();</span>
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    if (user.getEmail() != null) {</span>
+<span class="fc" id="L68">      throw new ServicesNotFoundException(&quot;Cannot update a user's email&quot;);</span>
+    }
+
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">    if (user.getFirstName() != null) {</span>
+<span class="fc" id="L72">      updatedUser.setFirstName(user.getFirstName());</span>
+    }
+
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">    if (user.getLastName() != null) {</span>
+<span class="nc" id="L76">      updatedUser.setLastName(user.getLastName());</span>
+    }
+
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">    if (user.getPhone() != null) {</span>
+<span class="nc" id="L80">      updatedUser.setPhone(user.getPhone());</span>
+    }
+
+<span class="fc" id="L83">    return userRepository.save(updatedUser);</span>
+  }
+
+  public Optional&lt;User&gt; getUserByEmail(String email) throws ServicesNotFoundException {
+<span class="fc" id="L87">    Optional&lt;User&gt; user = userRepository.findByEmail(email);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (user.isEmpty()) {</span>
+<span class="fc" id="L89">      throw new ServicesNotFoundException(&quot;We could not find a user with the given email.&quot;);</span>
+    }
+<span class="fc" id="L91">    return user;</span>
+  }
+
+  public List&lt;User&gt; getAllUsers() {
+<span class="fc" id="L95">    return userRepository.findAll();</span>
+  }
+
+  public void deleteUser(Long userId) throws ServicesNotFoundException {
+<span class="fc" id="L99">    Optional&lt;User&gt; existingUser = userRepository.findById(userId);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">    if (existingUser.isEmpty()) {</span>
+<span class="fc" id="L101">      throw new ServicesNotFoundException(&quot;User not found&quot;);</span>
+    }
+<span class="fc" id="L103">    userRepository.deleteById(userId);</span>
+<span class="fc" id="L104">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

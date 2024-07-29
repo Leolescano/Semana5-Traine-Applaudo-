@@ -1,0 +1,10 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+homework5,com.applaudo.homework5.utils,Validations,3,20,0,0,1,6,1,2,1,2
+homework5,com.applaudo.homework5,Homework5Application,5,3,0,0,2,1,1,1,1,1
+homework5,com.applaudo.homework5.entities,User,0,66,0,0,0,9,0,14,0,14
+homework5,com.applaudo.homework5.utils.exceptions,ValidationException,0,4,0,0,0,2,0,1,0,1
+homework5,com.applaudo.homework5.services.exceptions,ServicesNotFoundException,0,4,0,0,0,2,0,1,0,1
+homework5,com.applaudo.homework5.services,UserService,8,173,4,28,2,43,4,18,0,6
+homework5,com.applaudo.homework5.config,TestConfig,0,4,0,0,0,2,0,2,0,2
+homework5,com.applaudo.homework5.controllers,UserController,0,92,0,4,0,27,0,8,0,6
+homework5,com.applaudo.homework5.dto,UserResponseDTO,12,42,0,0,1,10,1,8,1,8
